@@ -5,6 +5,10 @@ on:
     branches:
       - main  # Set this to your default branch: main, master, etc.
 
+permissions:
+  contents: write
+  pages: write
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -27,6 +31,7 @@ jobs:
       - name: Deploy to GitHub Pages 🚀
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          branch: gh-pages  # The branch the action should deploy to
           folder: _site     # The folder the action should deploy (adjust if your output folder is different)
+          branch: gh-pages  # The branch the action should deploy to
+          token: ${{ secrets.GITHUB_TOKEN }}  # GitHub 自動提供的 token
           clean: true       # Automatically remove deleted files from the deploy branch
