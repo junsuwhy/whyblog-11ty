@@ -70,8 +70,8 @@ module.exports = function(eleventyConfig) {
     markdownTemplateEngine: "njk",
     htmlTemplateEngine: "njk",
     dataTemplateEngine: "njk",
-    // 設定多輸入目錄
-    pathPrefix: "/",
+    // 根據環境變量設定路徑前綴，本地開發使用根路徑，部署到 GitHub Pages 時使用子路徑
+    pathPrefix: process.env.ELEVENTY_ENV === 'production' ? "/whyblog-11ty/" : "/",
     // 使用自定義函數來處理檔案路徑
     passthroughFileCopy: true,
     // 自定義 key 與檔案路徑 pattern 的對應

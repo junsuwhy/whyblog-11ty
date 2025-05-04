@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "eleventy",
+    "build": "cross-env ELEVENTY_ENV=production eleventy",
     "dev": "eleventy --serve"
   },
   "keywords": [],
@@ -20,6 +20,7 @@
     "task-master-ai": "^0.13.2"
   },
   "devDependencies": {
-    "@11ty/eleventy": "^3.0.0"
+    "@11ty/eleventy": "^3.0.0",
+    "cross-env": "^7.0.3"
   }
 }
