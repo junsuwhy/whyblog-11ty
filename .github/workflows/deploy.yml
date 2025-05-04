@@ -1,0 +1,32 @@
+name: Build and Deploy 11ty Site
+
+on:
+  push:
+    branches:
+      - main  # Set this to your default branch: main, master, etc.
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js ⚙️
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'  # You can adjust this to your project's Node.js version
+          cache: 'npm'
+
+      - name: Install Dependencies 📦
+        run: npm ci
+
+      - name: Build 11ty Site 🏗️
+        run: npm run build
+
+      - name: Deploy to GitHub Pages 🚀
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages  # The branch the action should deploy to
+          folder: _site     # The folder the action should deploy (adjust if your output folder is different)
+          clean: true       # Automatically remove deleted files from the deploy branch
