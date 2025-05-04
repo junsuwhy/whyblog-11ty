@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="WhyBlog - 分享技術與生活的個人部落格">
+  <title>Debian／Ubuntu 使用 systemd‑timesyncd 調整 NTP Server 完整教學 | WhyBlog</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Main stylesheet -->
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <div class="logo-container">
+        <h1 class="site-title"><a href="/"><i class="fas fa-terminal"></i> WhyBlog</a></h1>
+      </div>
+      <nav class="main-nav">
+        <button class="menu-toggle" aria-label="Toggle menu">
+          <span class="hamburger"></span>
+        </button>
+        <ul class="nav-links">
+          <li><a href="/blog/"><i class="fas fa-pen-fancy"></i> 部落格</a></li>
+          <li><a href="/knowledge/"><i class="fas fa-book"></i> 知識庫</a></li>
+          <li><a href="/about/"><i class="fas fa-user"></i> 關於我</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div class="container">
+      
+<article class="post">
+  <header class="post-header">
+    <h1>Debian／Ubuntu 使用 systemd‑timesyncd 調整 NTP Server 完整教學</h1>
+    <div class="post-meta">
+      <time datetime="Wed May 01 2024 00:00:00 GMT+0000 (Coordinated Universal Time)">2024年5月1日</time>
+      
+      <div class="post-tags">
+        
+          <span class="tag">knowledge</span>
+        
+          <span class="tag">linux</span>
+        
+          <span class="tag">ubuntu</span>
+        
+          <span class="tag">debian</span>
+        
+          <span class="tag">ntp</span>
+        
+          <span class="tag">systemd</span>
+        
+      </div>
+      
+    </div>
+  </header>
+
+  <div class="post-content">
+    <h2>Debian／Ubuntu 使用 systemd‑timesyncd 調整 NTP Server 完整教學</h2>
+<blockquote>
+<p>適用版本：Debian 10＋、Ubuntu 18.04＋（含 22.04、24.04）<br>
+目的：把系統的時間同步來源（NTP Server）改成自家的 <code>time.server.mydomain.com.tw</code>，並驗證設定是否生效。</p>
+</blockquote>
+<hr>
+<h3>1️⃣　修改 systemd‑timesyncd 的 NTP Server</h3>
+<ol>
+<li>
+<p><strong>編輯設定檔</strong></p>
+<pre><code class="language-bash">sudo nano /etc/systemd/timesyncd.conf
+</code></pre>
+<p>在 <code>[Time]</code> 區塊加入或修改 <code>NTP=</code>，例如：</p>
+<pre><code>[Time]
+NTP=time.server.mydomain.com.tw
+</code></pre>
+<blockquote>
+<p>若同時想留備援，可用空白分隔：<br>
+<code>NTP=time.server.mydomain.com.tw 1.1.1.1 8.8.8.8</code></p>
+</blockquote>
+</li>
+<li>
+<p><strong>重新啟動服務並確保開機自動啟用</strong></p>
+<pre><code class="language-bash">sudo systemctl restart systemd-timesyncd
+sudo systemctl enable systemd-timesyncd
+</code></pre>
+</li>
+</ol>
+<hr>
+<h3>2️⃣　確認 NTP Server 已正確套用</h3>
+<pre><code class="language-bash">timedatectl timesync-status      # Debian 12+/Ubuntu 22.04+
+
+# 舊版系統用
+timedatectl status
+</code></pre>
+<p>重點欄位解讀：</p>
+<table>
+<thead>
+<tr>
+<th>欄位</th>
+<th>代表意思</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Server:</code></td>
+<td>正在使用的 NTP Server，應顯示 <code>time.server.mydomain.com.tw</code></td>
+</tr>
+<tr>
+<td><code>Leap:</code></td>
+<td>是否閏秒資訊正常</td>
+</tr>
+<tr>
+<td><code>Offset:</code></td>
+<td>本機時間與伺服器差距，幾十毫秒以內屬正常</td>
+</tr>
+<tr>
+<td><code>Poll:</code></td>
+<td>下次同步間隔，初期較短，穩定後可長達 64 min</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>🔧 常見 QA／除錯</h2>
+<h3>Q1：怎麼查我的系統目前跑哪一款 NTP 同步工具？</h3>
+<pre><code class="language-bash">systemctl list-unit-files | grep -E 'timesync|ntp|chrony'
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>看到的服務</th>
+<th>代表用的是</th>
+<th>狀態</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>systemd-timesyncd.service</code></td>
+<td><strong>systemd‑timesyncd</strong></td>
+<td>建議開啟</td>
+</tr>
+<tr>
+<td><code>ntpsec.service</code>、<code>ntpd.service</code></td>
+<td><strong>ntpsec / ntpd</strong></td>
+<td>二擇一</td>
+</tr>
+<tr>
+<td><code>chrony.service</code></td>
+<td><strong>chrony</strong></td>
+<td>建議用於大規模或需要高精度時</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>原則：只留一套。</strong> 多套同時開會互搶 UDP 123，導致時間漂移。</p>
+</blockquote>
+<hr>
+<h3>Q2：如果我現在不是用 systemd‑timesyncd，要怎麼裝回來？</h3>
+<ol>
+<li>
+<p>停用現有 NTP 服務（以 ntpsec 為例）</p>
+<pre><code class="language-bash">sudo systemctl disable --now ntpsec.service
+</code></pre>
+</li>
+<li>
+<p>安裝或重裝 <code>systemd-timesyncd</code></p>
+<ul>
+<li>
+<p><strong>Debian 12／Ubuntu 22.04↑</strong>：</p>
+<pre><code class="language-bash">sudo apt install --reinstall systemd
+</code></pre>
+<p>timesyncd 已隨 systemd 打包。</p>
+</li>
+<li>
+<p><strong>舊版（Debian 11 以下）</strong>：</p>
+<pre><code class="language-bash">sudo apt install systemd-timesyncd
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>啟用並立即啟動</p>
+<pre><code class="language-bash">sudo systemctl enable --now systemd-timesyncd
+</code></pre>
+</li>
+<li>
+<p>依前述步驟設定 <code>NTP=</code> 即可。</p>
+</li>
+</ol>
+<hr>
+<h3>Q3：systemd‑timesyncd 跟其他 NTP 套件差在哪？</h3>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th><strong>systemd‑timesyncd</strong></th>
+<th><strong>chrony</strong></th>
+<th><strong>ntpsec / ntpd</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>角色</td>
+<td>輕量 <strong>SNTP Client</strong></td>
+<td>全功能 NTPv4（客戶端＋伺服器）</td>
+<td>全功能 NTPv4（客戶端＋伺服器）</td>
+</tr>
+<tr>
+<td>精準度</td>
+<td>ms 級，日常服務足夠</td>
+<td>μs 級，收斂快，雲端環境友善</td>
+<td>μs 級，可支援 PPS／GPS</td>
+</tr>
+<tr>
+<td>支援 NTS 加密</td>
+<td>❌</td>
+<td>✅</td>
+<td>✅（ntpsec）</td>
+</tr>
+<tr>
+<td>可當內網 NTP Server</td>
+<td>❌</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>安裝難度</td>
+<td>內建、零依賴</td>
+<td>需額外安裝</td>
+<td>需額外安裝</td>
+</tr>
+<tr>
+<td>典型使用情境</td>
+<td>VM、小型服務、IoT</td>
+<td>大量伺服器、高精度需求</td>
+<td>科研、金融、想用 NTS</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>簡單選擇：</p>
+<ul>
+<li>
+<p><strong>只要把時間抓準</strong> → 用 <strong>systemd‑timesyncd</strong>。</p>
+</li>
+<li>
+<p><strong>要當 NTP 伺服器、雲端大規模</strong> → 考慮 <strong>chrony</strong>。</p>
+</li>
+<li>
+<p><strong>需要 NTS 或超高精度</strong> → 考慮 <strong>ntpsec</strong>。</p>
+</li>
+</ul>
+</blockquote>
+<hr>
+<h2>☑️　檢查清單（做完可以逐項打勾）</h2>
+<ul>
+<li>
+<p><code>/etc/systemd/timesyncd.conf</code> 已寫入正確 <code>NTP=time.server.mydomain.com.tw</code></p>
+</li>
+<li>
+<p><code>systemctl status systemd-timesyncd</code> 顯示 <code>active (running)</code></p>
+</li>
+<li>
+<p><code>timedatectl timesync-status</code> 的 <strong>Server</strong> 行指向新伺服器</p>
+</li>
+<li>
+<p><code>Offset</code> 數值在數十毫秒以內並穩定</p>
+</li>
+<li>
+<p><code>ss -ulpn | grep :123</code> 確定只有 <code>systemd-timesyncd</code> 佔用 UDP 123</p>
+</li>
+</ul>
+<p>全部通過，就代表你的 Debian／Ubuntu 已經成功改用自家 NTP Server，同步無虞！👍</p>
+
+  </div>
+</article>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-branding">
+          <h2><i class="fas fa-terminal"></i> WhyBlog</h2>
+          <p class="footer-tagline">分享技術與生活的個人部落格</p>
+        </div>
+        <div class="footer-nav">
+          <h3>導航</h3>
+          <ul>
+            <li><a href="/">首頁</a></li>
+            <li><a href="/blog/">部落格</a></li>
+            <li><a href="/knowledge/">知識庫</a></li>
+            <li><a href="/about/">關於我</a></li>
+          </ul>
+        </div>
+        <div class="footer-social">
+          <h3>社群連結</h3>
+          <div class="social-icons">
+            <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 WhyBlog. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript -->
+  <script>
+    // Mobile navigation toggle
+    document.querySelector('.menu-toggle').addEventListener('click', function() {
+      document.querySelector('.nav-links').classList.toggle('active');
+      this.classList.toggle('active');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="WhyBlog - 分享技術與生活的個人部落格">
+  <title>歡迎來到我的部落格 | WhyBlog</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Main stylesheet -->
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <div class="logo-container">
+        <h1 class="site-title"><a href="/"><i class="fas fa-terminal"></i> WhyBlog</a></h1>
+      </div>
+      <nav class="main-nav">
+        <button class="menu-toggle" aria-label="Toggle menu">
+          <span class="hamburger"></span>
+        </button>
+        <ul class="nav-links">
+          <li><a href="/blog/"><i class="fas fa-pen-fancy"></i> 部落格</a></li>
+          <li><a href="/knowledge/"><i class="fas fa-book"></i> 知識庫</a></li>
+          <li><a href="/about/"><i class="fas fa-user"></i> 關於我</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div class="container">
+      
+<article class="post">
+  <header class="post-header">
+    <h1>歡迎來到我的部落格</h1>
+    <div class="post-meta">
+      <time datetime="Sat May 04 2024 00:00:00 GMT+0000 (Coordinated Universal Time)">2024年5月4日</time>
+      
+      <div class="post-tags">
+        
+          <span class="tag">blog</span>
+        
+          <span class="tag">公告</span>
+        
+          <span class="tag">部落格</span>
+        
+      </div>
+      
+    </div>
+  </header>
+
+  <div class="post-content">
+    <h1>歡迎來到我的部落格</h1>
+<p>這是我的第一篇部落格文章，使用 11ty 靜態網站生成器建立。</p>
+<h2>為什麼選擇 11ty?</h2>
+<p>11ty (Eleventy) 是一個簡單但功能強大的靜態網站生成器，它具有以下優點：</p>
+<ol>
+<li><strong>簡單易用</strong> - 設置簡單，學習曲線平緩</li>
+<li><strong>速度快</strong> - 生成靜態網站的速度極快</li>
+<li><strong>靈活性高</strong> - 支援多種模板語言</li>
+<li><strong>零配置</strong> - 開箱即用，無需複雜設定</li>
+</ol>
+<h2>這個部落格的功能</h2>
+<p>這個部落格包含以下功能：</p>
+<ul>
+<li>部落格文章列表</li>
+<li>知識庫文章</li>
+<li>標籤系統</li>
+<li>響應式設計</li>
+<li>簡潔的閱讀體驗</li>
+</ul>
+<h2>接下來的計劃</h2>
+<p>未來我將在這裡分享各種有關技術、生活和我的想法的文章。敬請期待！</p>
+<pre><code class="language-javascript">// 一個簡單的 JavaScript 代碼示例
+function sayHello(name) {
+  return `你好，${name}！歡迎來到我的部落格`;
+}
+
+console.log(sayHello('訪客'));
+</code></pre>
+
+  </div>
+</article>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-branding">
+          <h2><i class="fas fa-terminal"></i> WhyBlog</h2>
+          <p class="footer-tagline">分享技術與生活的個人部落格</p>
+        </div>
+        <div class="footer-nav">
+          <h3>導航</h3>
+          <ul>
+            <li><a href="/">首頁</a></li>
+            <li><a href="/blog/">部落格</a></li>
+            <li><a href="/knowledge/">知識庫</a></li>
+            <li><a href="/about/">關於我</a></li>
+          </ul>
+        </div>
+        <div class="footer-social">
+          <h3>社群連結</h3>
+          <div class="social-icons">
+            <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 WhyBlog. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript -->
+  <script>
+    // Mobile navigation toggle
+    document.querySelector('.menu-toggle').addEventListener('click', function() {
+      document.querySelector('.nav-links').classList.toggle('active');
+      this.classList.toggle('active');
+    });
+  </script>
+</body>
+</html>

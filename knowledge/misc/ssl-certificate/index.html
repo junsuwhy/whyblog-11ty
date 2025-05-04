@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="WhyBlog - 分享技術與生活的個人部落格">
+  <title>Nginx SSL 憑證檔案與轉檔設定說明 | WhyBlog</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Main stylesheet -->
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <div class="logo-container">
+        <h1 class="site-title"><a href="/"><i class="fas fa-terminal"></i> WhyBlog</a></h1>
+      </div>
+      <nav class="main-nav">
+        <button class="menu-toggle" aria-label="Toggle menu">
+          <span class="hamburger"></span>
+        </button>
+        <ul class="nav-links">
+          <li><a href="/blog/"><i class="fas fa-pen-fancy"></i> 部落格</a></li>
+          <li><a href="/knowledge/"><i class="fas fa-book"></i> 知識庫</a></li>
+          <li><a href="/about/"><i class="fas fa-user"></i> 關於我</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div class="container">
+      
+<article class="post">
+  <header class="post-header">
+    <h1>Nginx SSL 憑證檔案與轉檔設定說明</h1>
+    <div class="post-meta">
+      <time datetime="Wed May 01 2024 00:00:00 GMT+0000 (Coordinated Universal Time)">2024年5月1日</time>
+      
+      <div class="post-tags">
+        
+          <span class="tag">knowledge</span>
+        
+          <span class="tag">nginx</span>
+        
+          <span class="tag">ssl</span>
+        
+          <span class="tag">certificate</span>
+        
+      </div>
+      
+    </div>
+  </header>
+
+  <div class="post-content">
+    <h1>Nginx SSL 憑證檔案與轉檔設定說明</h1>
+<blockquote>
+<p>本文件整理常見憑證檔案格式、轉檔指令、Nginx 設定範例與驗證／重載指令，可作為日後快速查閱備忘。</p>
+</blockquote>
+<hr>
+<h2>1. 常見檔案格式與用途</h2>
+<table>
+<thead>
+<tr>
+<th>副檔名</th>
+<th>格式類型</th>
+<th>典型檔案名範例</th>
+<th>內含資料</th>
+<th>主要用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>.key</code></td>
+<td><strong>PEM</strong></td>
+<td><code>server.key</code></td>
+<td>私鑰（可能有密碼）</td>
+<td>伺服器端僅存放於本機，不可外流</td>
+</tr>
+<tr>
+<td><code>.crt</code> / <code>.cer</code></td>
+<td><strong>PEM</strong> or <strong>DER</strong></td>
+<td><code>example.com.crt</code></td>
+<td>伺服器憑證（End‑entity）</td>
+<td>提供給用戶端驗證網站身分</td>
+</tr>
+<tr>
+<td><code>.pem</code></td>
+<td><strong>PEM</strong></td>
+<td><code>fullchain.pem</code></td>
+<td>通常是「憑證 + 中繼」串接</td>
+<td>Nginx <code>ssl_certificate</code> 常用</td>
+</tr>
+<tr>
+<td><code>.p7b</code> / <code>.p7c</code></td>
+<td><strong>PKCS#7</strong></td>
+<td><code>bundle.p7b</code></td>
+<td>多張「中繼/根」封裝</td>
+<td>先轉成 PEM 用於 Nginx</td>
+</tr>
+<tr>
+<td><code>.pfx</code> / <code>.p12</code></td>
+<td><strong>PKCS#12</strong></td>
+<td><code>cert_bundle.pfx</code></td>
+<td>憑證 + 私鑰（已加密）</td>
+<td>Windows/IIS 或 Java Keystore 匯入</td>
+</tr>
+<tr>
+<td><code>ca‑bundle</code> / <code>chain.pem</code></td>
+<td><strong>PEM</strong></td>
+<td><code>sectigo_chain.pem</code></td>
+<td>中繼(+根)憑證</td>
+<td>Nginx <code>ssl_trusted_certificate</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>2. 常用轉檔指令</h2>
+<blockquote>
+<p>指令皆以 <code>openssl</code> 為例，可在 Linux/macOS 直接使用。</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>需求</th>
+<th>指令範例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>DER → PEM</strong></td>
+<td><code>openssl x509 -inform DER -in cert.cer -out cert.pem</code></td>
+</tr>
+<tr>
+<td><strong>PKCS#7 (P7B) → PEM</strong></td>
+<td><code>openssl pkcs7 -print_certs -in bundle.p7b -out bundle.pem</code></td>
+</tr>
+<tr>
+<td><strong>PFX → 憑證(無私鑰)</strong></td>
+<td><code>openssl pkcs12 -nokeys -in cert.pfx -out cert.pem</code></td>
+</tr>
+<tr>
+<td><strong>PFX → 私鑰(有密碼)</strong></td>
+<td><code>openssl pkcs12 -nocerts -in cert.pfx -out key.pem</code></td>
+</tr>
+<tr>
+<td><strong>移除私鑰密碼</strong></td>
+<td><code>openssl rsa -in key.pem -out key-nopw.pem</code></td>
+</tr>
+<tr>
+<td><strong>合併憑證與中繼</strong></td>
+<td><code>cat cert.pem bundle.pem &gt; fullchain.pem</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>🔖 <strong>小技巧</strong>：PEM 段落之間務必保留一個空白換行，避免 <code>bad end line</code> 錯誤。</p>
+</blockquote>
+<hr>
+<h2>3. Nginx 設定範例</h2>
+<h3>3.1 單檔 fullchain 寫法（最簡單）</h3>
+<pre><code class="language-nginx">server {
+    listen 443 ssl http2;
+    server_name  example.com www.example.com;
+
+    ssl_certificate      /etc/nginx/ssl/fullchain.pem;   # 憑證+中繼
+    ssl_certificate_key  /etc/nginx/ssl/server.key;      # 私鑰 (無密碼)
+
+    ssl_protocols        TLSv1.2 TLSv1.3;
+    ssl_ciphers          HIGH:!aNULL:!MD5;
+    ssl_prefer_server_ciphers on;
+}
+</code></pre>
+<h3>3.2 分離憑證與鏈（建議）</h3>
+<pre><code class="language-nginx">server {
+    listen 443 ssl http2;
+    server_name  example.com www.example.com;
+
+    ssl_certificate           /etc/nginx/ssl/example.com.crt;  # 只放網站憑證
+    ssl_certificate_key       /etc/nginx/ssl/server.key;       # 私鑰 (無密碼)
+    ssl_trusted_certificate   /etc/nginx/ssl/chain.pem;        # 中繼(+根)
+
+    ssl_stapling on;
+    ssl_stapling_verify on;
+    resolver 1.1.1.1 8.8.8.8;
+}
+</code></pre>
+<blockquote>
+<p>建議私鑰與其所在目錄權限如下：</p>
+</blockquote>
+<pre><code class="language-bash"># 僅 root 能存取目錄
+sudo chmod 700 /etc/nginx/ssl
+
+# 私鑰檔僅 root 可讀寫
+sudo chown root:root /etc/nginx/ssl/server.key
+sudo chmod 600 /etc/nginx/ssl/server.key
+</code></pre>
+<hr>
+<h2>4. 檔案驗證與 Nginx 操作指令</h2>
+<h3>4.1 驗證私鑰與憑證是否匹配</h3>
+<pre><code class="language-bash">openssl rsa  -noout -modulus -in server.key        | openssl md5
+openssl x509 -noout -modulus -in example.com.crt   | openssl md5
+# 兩串 MD5 值必須相同
+</code></pre>
+<h3>4.2 驗證憑證鏈完整</h3>
+<pre><code class="language-bash">openssl verify -CAfile chain.pem example.com.crt   # 顯示 OK 即通過
+</code></pre>
+<h3>4.3 Nginx 語法檢查與重新載入</h3>
+<pre><code class="language-bash">sudo nginx -t                          # 檢查設定檔語法
+sudo systemctl reload nginx            # 平滑重載，不中斷連線
+# 若要完整重啟（有停機風險）
+sudo systemctl restart nginx
+</code></pre>
+<blockquote>
+<p>每次修改憑證或設定檔後，務必先 <code>nginx -t</code> 再 reload，確保不中斷服務。</p>
+</blockquote>
+<hr>
+<p><strong>更新紀錄</strong></p>
+<ul>
+<li>2025‑04‑22：首版完成</li>
+</ul>
+<blockquote>
+<p>如需新增其他案例或指令，請隨時於 Canvas 內編輯！</p>
+</blockquote>
+
+  </div>
+</article>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-branding">
+          <h2><i class="fas fa-terminal"></i> WhyBlog</h2>
+          <p class="footer-tagline">分享技術與生活的個人部落格</p>
+        </div>
+        <div class="footer-nav">
+          <h3>導航</h3>
+          <ul>
+            <li><a href="/">首頁</a></li>
+            <li><a href="/blog/">部落格</a></li>
+            <li><a href="/knowledge/">知識庫</a></li>
+            <li><a href="/about/">關於我</a></li>
+          </ul>
+        </div>
+        <div class="footer-social">
+          <h3>社群連結</h3>
+          <div class="social-icons">
+            <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 WhyBlog. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript -->
+  <script>
+    // Mobile navigation toggle
+    document.querySelector('.menu-toggle').addEventListener('click', function() {
+      document.querySelector('.nav-links').classList.toggle('active');
+      this.classList.toggle('active');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="WhyBlog - 分享技術與生活的個人部落格">
+  <title>首頁 | WhyBlog</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Main stylesheet -->
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <div class="logo-container">
+        <h1 class="site-title"><a href="/"><i class="fas fa-terminal"></i> WhyBlog</a></h1>
+      </div>
+      <nav class="main-nav">
+        <button class="menu-toggle" aria-label="Toggle menu">
+          <span class="hamburger"></span>
+        </button>
+        <ul class="nav-links">
+          <li><a href="/blog/"><i class="fas fa-pen-fancy"></i> 部落格</a></li>
+          <li><a href="/knowledge/"><i class="fas fa-book"></i> 知識庫</a></li>
+          <li><a href="/about/"><i class="fas fa-user"></i> 關於我</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div class="container">
+      
+<section class="hero">
+  <h1>歡迎來到 WhyBlog</h1>
+  <p>這是一個使用 11ty、Markdown 和 GitHub Pages 建立的部落格</p>
+</section>
+
+<section class="recent-posts">
+  <h2>最新文章</h2>
+  <div class="post-grid">
+    
+      
+      
+        
+        <div class="post-card">
+          <h3><a href="/content/blog/2024-08/成為企劃人摘要/">《成為企劃人》書籍摘要</a></h3>
+          <time datetime="Thu Aug 01 2024 00:00:00 GMT+0000 (Coordinated Universal Time)">2024年8月1日</time>
+          
+          <a href="/content/blog/2024-08/成為企劃人摘要/" class="read-more">繼續閱讀</a>
+        </div>
+        
+      
+        
+        <div class="post-card">
+          <h3><a href="/content/blog/2025-05/welcome-to-my-blog/">歡迎來到我的部落格</a></h3>
+          <time datetime="Sat May 04 2024 00:00:00 GMT+0000 (Coordinated Universal Time)">2024年5月4日</time>
+          
+          <a href="/content/blog/2025-05/welcome-to-my-blog/" class="read-more">繼續閱讀</a>
+        </div>
+        
+      
+    
+  </div>
+</section>
+
+<section class="recent-knowledge">
+  <h2>最新知識庫文章</h2>
+  <div class="post-grid">
+    
+      
+      
+        
+        <div class="post-card">
+          <h3><a href="/knowledge/misc/ssl-certificate/">Nginx SSL 憑證檔案與轉檔設定說明</a></h3>
+          <time datetime="Wed May 01 2024 00:00:00 GMT+0000 (Coordinated Universal Time)">2024年5月1日</time>
+          
+          <a href="/knowledge/misc/ssl-certificate/" class="read-more">繼續閱讀</a>
+        </div>
+        
+      
+        
+        <div class="post-card">
+          <h3><a href="/knowledge/linux/ntp-setup/">Debian／Ubuntu 使用 systemd‑timesyncd 調整 NTP Server 完整教學</a></h3>
+          <time datetime="Wed May 01 2024 00:00:00 GMT+0000 (Coordinated Universal Time)">2024年5月1日</time>
+          
+          <a href="/knowledge/linux/ntp-setup/" class="read-more">繼續閱讀</a>
+        </div>
+        
+      
+    
+  </div>
+</section>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-branding">
+          <h2><i class="fas fa-terminal"></i> WhyBlog</h2>
+          <p class="footer-tagline">分享技術與生活的個人部落格</p>
+        </div>
+        <div class="footer-nav">
+          <h3>導航</h3>
+          <ul>
+            <li><a href="/">首頁</a></li>
+            <li><a href="/blog/">部落格</a></li>
+            <li><a href="/knowledge/">知識庫</a></li>
+            <li><a href="/about/">關於我</a></li>
+          </ul>
+        </div>
+        <div class="footer-social">
+          <h3>社群連結</h3>
+          <div class="social-icons">
+            <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 WhyBlog. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript -->
+  <script>
+    // Mobile navigation toggle
+    document.querySelector('.menu-toggle').addEventListener('click', function() {
+      document.querySelector('.nav-links').classList.toggle('active');
+      this.classList.toggle('active');
+    });
+  </script>
+</body>
+</html>
