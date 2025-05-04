@@ -1,0 +1,25 @@
+{
+  "name": "whyblog",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "eleventy",
+    "dev": "eleventy --serve"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.11.0",
+    "@modelcontextprotocol/server-filesystem": "^2025.3.28",
+    "@modelcontextprotocol/server-puppeteer": "^2025.4.7",
+    "@modelcontextprotocol/server-sequential-thinking": "^0.6.2",
+    "task-master-ai": "^0.13.2"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "^3.0.0"
+  }
+}

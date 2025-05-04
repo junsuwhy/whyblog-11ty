@@ -1,0 +1,57 @@
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Eleventy build output
+_site/
+public/
+dist/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Cache directories
+.npm
+.eslintcache
+.stylelintcache
+.cache/
+.parcel-cache/
+
+# Editor directories and files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local Netlify folder
+.netlify/
+
+# Optional: Ignore package-lock.json if you prefer
+# package-lock.json
+
+# Optional: Ignore yarn.lock if you prefer
+# yarn.lock

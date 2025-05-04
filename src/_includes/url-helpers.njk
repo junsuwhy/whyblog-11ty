@@ -1,0 +1,3 @@
+{% macro getPermalink(post) %}
+{% if post.data.permalink %}{{ post.data.permalink }}{% else %}{{ post.url }}{% endif %}
+{% endmacro %}

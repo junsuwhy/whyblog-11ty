@@ -1,0 +1,35 @@
+---
+layout: base
+title: 知識庫
+---
+
+<h1>知識庫文章</h1>
+
+<div class="post-list">
+  {% if collections.knowledge %}
+    {% set posts = collections.knowledge | reverse %}
+    {% for post in posts %}
+    <article class="post-item">
+      <h2><a href="{% if post.data.permalink %}{{ post.data.permalink }}{% else %}{{ post.url }}{% endif %}">{{ post.data.title }}</a></h2>
+      <div class="post-meta">
+        <time datetime="{{ post.date }}">{{ post.date | formatDate }}</time>
+        {% if post.data.tags %}
+        <div class="post-tags">
+          {% for tag in post.data.tags %}
+            {% if tag != "knowledge" %}
+              <span class="tag">{{ tag }}</span>
+            {% endif %}
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+      {% if post.data.excerpt %}
+        <div class="excerpt">{{ post.data.excerpt | safe }}</div>
+      {% endif %}
+      <a href="{% if post.data.permalink %}{{ post.data.permalink }}{% else %}{{ post.url }}{% endif %}" class="read-more">繼續閱讀</a>
+    </article>
+    {% endfor %}
+  {% else %}
+    <p>暫無文章</p>
+  {% endif %}
+</div>
